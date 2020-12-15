@@ -14,7 +14,7 @@ Andrew Ogaga
 
 # UI View
 
-[Dream App](https://dream.netlify.app)
+[Dream App](https://nostalgic-mcclintock-613fe6.netlify.app/)
 
 # Installation Procedure
 
