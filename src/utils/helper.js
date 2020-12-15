@@ -28,3 +28,8 @@ export const removeDream = (id) => {
 };
 
 export const generateId = () => uuidv4();
+
+export const executeScroll = (dRef) =>
+  dRef.current.scrollIntoView({
+    behavior: "smooth",
+  });

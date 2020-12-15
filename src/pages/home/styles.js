@@ -201,11 +201,6 @@ export const CaptionCardHeader = styled(DreamsText)`
   }
 `;
 
-export const PrimeText = styled.p`
-  color: ${PRI_COLOR};
-  margin: auto;
-`;
-
 export const EmptyContentText = styled.p`
   font-size: 2rem;
   font-weight: bolder;

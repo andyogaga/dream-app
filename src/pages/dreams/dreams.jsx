@@ -23,19 +23,19 @@ const DreamsComponent = ({ dreams, setDreams, page, setPage, customRef }) => {
               return (
                 <tbody key={`dream-${dream.id}`}>
                   <tr>
-                    {" "}
                     <TableCell data-testid={`dream-${dream.id}`}>
                       {dream.dream}
                     </TableCell>
                     <TableCell data-testid={`dream-name-${dream.firstname}`}>
                       {dream.firstName}
                     </TableCell>
-                    <TableCell data-testid={`dream-delete`}>
+                    <TableCell >
                       <button
                         onClick={() => {
                           removeDream(dream.id);
                           setDreams(getDreams());
                         }}
+                        data-testid={`dream-delete-${dream.id}`}
                       >
                         <img src={Delete} alt="Delete" />
                       </button>

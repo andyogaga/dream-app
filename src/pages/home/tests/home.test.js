@@ -1,52 +1,73 @@
 /* eslint-disable no-undef */
-import {
-  wait,
-  waitForDomChange,
-  fireEvent,
-  render,
-} from "@testing-library/react";
+import { wait, fireEvent, render, waitFor } from "@testing-library/react";
+
+import "mutationobserver-shim";
+
 import React from "react";
 import Home from "../home";
 const helperFunctions = require("../../../utils/helper");
-const mockcheckPrimeWithSoE = jest.spyOn(helperFunctions, "checkPrimeWithSoE");
+global.MutationObserver = window.MutationObserver;
 
-describe("Prime number generator Tests", () => {
-  it("should load the document to the DOM with an input form", async () => {
+const initiateDBMock = jest.spyOn(helperFunctions, "initiatStorage");
+const getDreams = jest.spyOn(helperFunctions, "getDreams");
+const addDream = jest.spyOn(helperFunctions, "addDream");
+const executeScroll = jest
+  .spyOn(helperFunctions, "executeScroll")
+  .mockImplementation(() => {});
+
+describe("Add Dream Tests", () => {
+  it("should load the dream home page document to the DOM with input forms", async (done) => {
     const { queryByPlaceholderText, queryByText } = render(<Home />);
-    await waitForDomChange((done) => {
-      const searchInput = queryByPlaceholderText("Enter amount of Primes");
-      const searchButton = queryByText("Get Primes");
-      expect(searchInput).not.toBeNull();
-      expect(searchButton).not.toBeNull();
+
+    await wait(() => {
+      const addFirstNameInput = queryByPlaceholderText("Mike");
+      const addDreamInput = queryByPlaceholderText("Enter your dream");
+      const addButton = queryByText("Add dream");
+      const welcomeText = queryByText("Welcome to my Dreams");
+      expect(addFirstNameInput).not.toBeNull();
+      expect(addDreamInput).not.toBeNull();
+      expect(addButton).not.toBeNull();
+      expect(welcomeText).not.toBeNull();
+      expect(initiateDBMock).toBeCalled();
       done();
     });
   });
 
-  it("should display table with multiplication table", async () => {
-    const { queryByTestId } = render(<Home />);
-    await wait(() => {
-      expect(queryByTestId("prime-table-11-7")).not.toBeNull();
-      expect(queryByTestId("prime-table-5-13")).not.toBeNull();
+  it("should display error if field is not entered", async (done) => {
+    const { queryAllByText, queryByText } = render(<Home />);
+    const addButton = queryByText("Add dream");
+    fireEvent.click(addButton);
+
+    await waitFor(() => {
+      const errorText = queryAllByText("Required!");
+      expect(errorText.length).toEqual(2);
+      done();
     });
   });
 
-  it("should fire search button when text is entered", async (done) => {
-    const { queryByText, queryByPlaceholderText, queryByTestId } = render(
-      <Home />
-    );
-    const searchInput = queryByPlaceholderText("Enter amount of Primes");
-    const searchButton = queryByText("Get Primes");
+  it("should add name and dream to dom on submit", async (done) => {
+    const { queryByText, queryByPlaceholderText, debug } = render(<Home />);
+    const addFirstNameInput = queryByPlaceholderText("Mike");
+    const addDreamInput = queryByPlaceholderText("Enter your dream");
+    const addButton = queryByText("Add dream");
 
-    fireEvent.change(searchInput, {
-      target: { value: 25 },
+    fireEvent.change(addFirstNameInput, {
+      target: { value: "henry" },
     });
-    fireEvent.blur(searchInput);
-    fireEvent.click(searchButton);
+    fireEvent.change(addDreamInput, {
+      target: { value: "This is my first dream and I am ready to conquer" },
+    });
+    fireEvent.click(addButton);
 
-    // const loader = await waitForElement(() => queryByTestId("loader"));
-    await wait(() => {
-      expect(mockcheckPrimeWithSoE).toBeCalled();
-      expect(queryByTestId("prime-table-29-11")).not.toBeNull();
+    await waitFor(() => {
+      expect(executeScroll).toBeCalled();
+      expect(addDream).toBeCalled();
+      expect(getDreams).toBeCalled();
+      expect(queryByText("Name")).not.toBeNull();
+      expect(queryByText("henry")).not.toBeNull();
+      expect(
+        queryByText("This is my first dream and I am ready to conquer")
+      ).not.toBeNull();
       done();
     });
   });

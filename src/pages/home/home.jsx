@@ -11,6 +11,7 @@ import {
   generateId,
   addDream,
   getDreams,
+  executeScroll,
 } from "../../utils/helper";
 import { useForm } from "react-hook-form";
 import CustomInput from "../../components/custom-input.component";
@@ -22,11 +23,7 @@ const Home = () => {
   const [page, setPage] = useState(1);
   const [dreams, setDreams] = useState([]);
   const values = watch();
-  const myRef = useRef(null);
-  const executeScroll = () =>
-    myRef.current.scrollIntoView({
-      behavior: "smooth",
-    });
+  let myRef = useRef(null);
 
   const onFormSubmit = (values) => {
     const newDream = {
@@ -39,7 +36,7 @@ const Home = () => {
       firstName: "",
       dream: "",
     });
-    executeScroll();
+    executeScroll(myRef);
   };
 
   const myGetDreamsCallback = useCallback(async () => {
